@@ -1,10 +1,12 @@
 package com.seventh7.mybatis.alias;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.spring.CommonSpringModel;
 import com.intellij.spring.SpringManager;
@@ -12,6 +14,8 @@ import com.intellij.spring.model.SpringBeanPointer;
 import com.intellij.spring.model.utils.SpringPropertyUtils;
 import com.intellij.spring.model.xml.beans.SpringPropertyDefinition;
 
+import com.intellij.util.xml.GenericDomValue;
+import com.seventh7.mybatis.util.JavaUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,12 +50,22 @@ public class BeanAliasResolver extends PackageAliasResolver{
   }
 
   private void addPackages(Set<String> res, CommonSpringModel springModel) {
-    for (SpringBeanPointer springBaseBeanPointer : springModel.findBeansByPsiClassWithInheritance(MAPPER_ALIAS_PACKAGE_CLASS)) {
-      SpringPropertyDefinition basePackages = SpringPropertyUtils.findPropertyByName(springBaseBeanPointer.getSpringBean(), MAPPER_ALIAS_PROPERTY);
-      if (basePackages != null) {
-        final String value = basePackages.getValueElement().getStringValue();
-        if (value != null) {
-          res.add(value);
+    Optional<PsiClass> sqlSessionFactoryBeanPsiClassOptional = JavaUtils.findClazz(project, MAPPER_ALIAS_PACKAGE_CLASS);
+    if (sqlSessionFactoryBeanPsiClassOptional.isPresent()) {
+      PsiClass psiClass = sqlSessionFactoryBeanPsiClassOptional.get();
+      for (SpringBeanPointer pointer : springModel.getAllDomBeans()) {
+        PsiClass beanClass = pointer.getBeanClass();
+        if(beanClass != null && beanClass.equals(psiClass)) {
+          SpringPropertyDefinition basePackages = SpringPropertyUtils.findPropertyByName(pointer.getSpringBean(), MAPPER_ALIAS_PROPERTY);
+          if (basePackages != null) {
+            GenericDomValue<?> valueElement = basePackages.getValueElement();
+            if (valueElement != null) {
+              final String value = valueElement.getStringValue();
+              if (value != null) {
+                res.add(value);
+              }
+            }
+          }
         }
       }
     }
