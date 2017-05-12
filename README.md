@@ -1,6 +1,5 @@
-#Download
-
-* http://plugins.jetbrains.com/plugin/7293
+# source
+forked from [rockjava/intellij-mybatis-plugin](https://github.com/rockjava/intellij-mybatis-plugin)
 
 # Features
 

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/intellij-mybatis-plugin.iml" filepath="$PROJECT_DIR$/intellij-mybatis-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij-idea-mybatis-plugin.iml" filepath="$PROJECT_DIR$/intellij-idea-mybatis-plugin.iml" />
     </modules>
   </component>
 </project>
